@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>I Love You ❤️</title>
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Short+Stack&amp;family=Homemade+Apple&amp;display=swap'><link rel="stylesheet" href="./style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Zeyada&family=Homemade+Apple&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="images/heart.webp">
+
+  <style>
+  
+  .music-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    url('images/bg.jpeg'); /* Replace with your desired image */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: white;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Oswald';
+  
+   /* glass effect */
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+
+.popup-content h2 {
+  font-size: 28px;
+  margin-bottom: 0px;
+}
+
+.popup-content p {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: white !important;
+}
+
+.text {
+  transition: all 0.5s ease-in-out;
+}
+
+.loading-text {
+  font-family: 'Homemade Apple', cursive;
+  font-size: 2em;
+  color: #444; /* pencil-gray */
+  text-align: center;
+  line-height: 1.4;
+  text-shadow: 0.5px 0.5px #ccc;
+  filter: contrast(90%) grayscale(30%);
+}
+
+
+@keyframes shimmer { to { background-position: 100% } }
+
+.voice-hint {
+  position: fixed;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2em;
+  font-family: 'Zeyada', cursive;
+  color: #3b3a38; /* pencil gray */
+  text-shadow: 0.4px 0.4px 0.5px #aaa; /* subtle smudge */
+  filter: contrast(90%) grayscale(30%);
+  padding: 18px 32px;
+  border-radius: 20px;
+  z-index: 9999;
+
+  background: linear-gradient(135deg, rgba(255, 192, 203, 0.25), rgba(173, 216, 230, 0.2));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  transition: opacity 1.5s ease-in-out;
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+.voice-hint.show {
+  opacity: 1;
+}
+
+.love-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  display: none;
+  z-index: 99999;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  height: 80vh; /* Or 100% */
+  max-width: 500px;
+  width: 90%;
+}
+
+.top-text {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* space between loading and pencil text */
+}
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(-0.3deg); }
+  50% { transform: rotate(0.3deg); }
+}
+
+.pencil-text {
+  animation: wobble 1.5s infinite ease-in-out;
+}
+
+.pencil-btn {
+  background: none;
+  border: none;
+  padding: 10px 0;
+  font-family: 'Homemade Apple', cursive;
+  font-size: 2em;
+  color: #444;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.3s ease;
+  outline: none;
+}
+
+.pencil-btn:hover {
+  transform: scale(1.05);
+}
+
+.pencil-btn .text {
+  position: relative;
+}
+
+.pencil-btn .text::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 100%;
+  height: 2px;
+  background-image: repeating-linear-gradient(
+    to right,
+    #444 0px,
+    #444 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+  pointer-events: none;
+  opacity: 0.9;
+  filter: blur(0.3px);
+}
+
+
+.pencil-btn:hover .text::after {
+  transform: scaleX(1);
+}
+
+.loading-text {
+  font-family: 'Homemade Apple', cursive;
+  font-size: 2em;
+  color: #444;
+  margin: 0;
+  text-align: center;
+  text-shadow: 0.5px 0.5px #ccc;
+}
+
+.pencil-text {
+  font-family: 'Homemade Apple', cursive;
+  font-size: 0.9em;
+  color: #444;
+  text-align: center;
+  text-shadow: 0.5px 0.5px #ccc;
+  animation: wobble 1.5s infinite ease-in-out;
+}
+
+@keyframes pencilWobble {
+  0%, 100% { transform: translateX(-50%) rotate(-0.3deg); }
+  50% { transform: translateX(-50%) rotate(0.3deg); }
+}
+
+.voice-hint.show {
+  animation: floatHint 1.2s ease-out forwards, pencilWobble 3s infinite ease-in-out;
+}
+
+.fade {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.fade.show {
+  opacity: 1;
+}
+
+.heart-float {
+  position: fixed;
+  width: 30px;
+  height: 30px;
+  background: url('images/heart.webp') no-repeat center / contain;
+  animation: floatHeart 4s linear infinite;
+  z-index: 999;
+  pointer-events: none;
+}
+
+@keyframes floatHeart {
+  0% {
+    transform: translateY(0) scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-200px) scale(1.2);
+    opacity: 0;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+<div id="musicPopup" class="music-popup">
+  <div class="popup-content">
+    <!-- Top Section: Loading + Pencil Text -->
+    <div class="top-text">
+      <div class="loading-text">Allow Access</div>
+      <div class="pencil-text">
+        You're about to experience something special...<br>
+        Just click "Play" 💕
+      </div>
+    </div>
+
+    <!-- Bottom Section: Play Button -->
+    <button class="pencil-btn" id="allowMusicBtn">
+      <span class="text">Play</span>
+    </button>
+  </div>
+</div>
+
+
+
+<audio id="bgMusic" src="music/music.mp3" loop></audio>
+
+<!-- partial:index.partial.html -->
+<div class="paper heart">
+
+</div>
+
+  
+<div class="paper image">
+  <p> and I fallen in</p>
+    <p>Love with You 😍 </p>
+   <img src="images/1.jpeg" />
+</div>
+
+<div class="paper image">
+  <p>You make everything beautiful.</p>
+  <img src="images/2.jpeg" />
+</div>
+
+<div class="paper image">
+  <p>How can be </p>
+   <p> someone so cute ❤️ </p>
+
+  <img src="images/3.jpg" />
+</div>
+
+
+
+<div class="paper red">
+<p class="p1"> and My Favorite</p>
+<p class="p2">Person 😍</p>
+</div>
+
+<div class="paper">
+<p class="p1">You are Cute </p>
+  <p class="p1">Amazing <span style="color: red !important;">❤️</span></p>
+</div>
+
+<div class="paper">
+<p class="p1">Drag the papers to move!</p>
+</div>
+
+<div id="voiceHint" class="voice-hint">If your heart feels full... say the words.</div>
+<video
+  id="loveVideo"
+  class="love-video"
+  src="video/video.mp4"
+  type="video/mp4"
+  controls
+  playsinline
+  style="display: none;">
+</video>
+
+<button id="manualPlay" style="display: none; position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 99999; font-size: 1.2em; padding: 10px 20px; border-radius: 12px; background: rgba(255, 100, 100, 0.8); color: white; border: none; cursor: pointer;">Play Video Manually ❤️</button>
+
+
+<!-- partial -->
+  <script  src="./script.js"></script>
+  
+    <script>
+let isListening = false;
+let recognition;
+
+function stopListening(manual = false) {
+  if (recognition) {
+    recognition._manuallyStopped = manual;
+    recognition.onend = null;
+    try {
+      recognition.abort();
+    } catch (e) {
+      console.warn("Error stopping recognition:", e);
+    }
+  }
+}
+
+function startListening() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert("Speech recognition not supported");
+    return;
+  }
+
+  if (recognition) {
+    try {
+      recognition.onend = null;
+      recognition.abort();
+    } catch (e) {}
+  }
+
+  recognition = new SpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.continuous = true;
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+    isListening = true;
+    console.log("🎤 Listening started");
+  };
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+    console.log("Heard:", transcript);
+    if (transcript.includes("i love you")) {
+      stopListening(true);
+      playLoveVideo();
+    }
+  };
+
+  recognition.onerror = (e) => {
+    console.error("Recognition error:", e.error);
+    if (e.error === "no-speech" && !isListening) {
+      setTimeout(startListening, 1000);
+    }
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    if (!recognition._manuallyStopped) {
+      console.log("🔄 Restarting...");
+      startListening();
+    }
+  };
+
+  recognition._manuallyStopped = false;
+  recognition.start();
+}
+
+function playLoveVideo() {
+  const loveVideo = document.getElementById('loveVideo');
+  const bgMusic = document.getElementById('bgMusic');
+
+  console.log("❤️ Playing love video...");
+  bgMusic.pause();
+  bgMusic.currentTime = 0;
+
+  document.querySelectorAll('body > *:not(#loveVideo)').forEach(el => {
+    el.style.display = 'none';
+  });
+
+  loveVideo.style.display = 'block';
+  loveVideo.muted = false;
+  loveVideo.autoplay = true;
+  loveVideo.playsInline = true;
+
+  loveVideo.play().catch((err) => {
+    console.error("❌ Autoplay failed:", err);
+    const manualBtn = document.getElementById('manualPlay');
+    manualBtn.style.display = 'block';
+
+    manualBtn.onclick = () => {
+      manualBtn.style.display = 'none';
+      loveVideo.play().catch(err => {
+        console.error("⚠️ Manual play also failed:", err);
+        alert("Please try tapping the video directly.");
+      });
+    };
+  });
+
+  if (loveVideo.requestFullscreen) {
+    loveVideo.requestFullscreen();
+  } else if (loveVideo.webkitEnterFullscreen) {
+    loveVideo.webkitEnterFullscreen();
+  }
+}
+
+function showVoiceHint() {
+  const voiceHint = document.getElementById('voiceHint');
+  if (voiceHint) {
+    voiceHint.classList.add('show');
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const popup = document.getElementById('musicPopup');
+  const allowBtn = document.getElementById('allowMusicBtn');
+  const bgMusic = document.getElementById('bgMusic');
+  const images = document.querySelectorAll('.paper.image');
+  const voiceHint = document.getElementById('voiceHint');
+
+  popup.classList.add('fade');
+  setTimeout(() => popup.classList.add('show'), 100);
+
+  if (!allowBtn) {
+    console.error("❌ Play button not found!");
+    return;
+  }
+
+  allowBtn.addEventListener('click', () => {
+    console.log("🎵 Play button clicked!");
+
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
+
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+      stream.getTracks().forEach(track => track.stop());
+
+      const seenImages = new Set();
+
+      images.forEach((imgBlock, i) => {
+        imgBlock.addEventListener('pointerdown', () => {
+          seenImages.add(i);
+          if (seenImages.size === images.length) {
+            showVoiceHint();
+            startListening();
+          }
+        });
+      });
+
+      bgMusic.play().catch(err => {
+        console.warn("Autoplay blocked, waiting for user interaction...");
+      });
+
+      popup.style.display = 'none';
+
+    }).catch((err) => {
+      console.error("❌ Microphone access denied:", err);
+      alert("Microphone access is required to unlock the surprise ❤️");
+    });
+  });
+});
+
+// Paper drag code
+document.querySelectorAll('.paper').forEach(paper => {
+  paper.style.position = 'absolute';
+  paper.style.cursor = 'grab';
+  let offsetX = 0, offsetY = 0, isDragging = false;
+
+  const onMove = (e) => {
+    if (!isDragging) return;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    paper.style.left = `${clientX - offsetX}px`;
+    paper.style.top = `${clientY - offsetY}px`;
+  };
+
+  const onUp = () => {
+    isDragging = false;
+    paper.style.cursor = 'grab';
+  };
+
+  const onDown = (e) => {
+    isDragging = true;
+    const rect = paper.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    offsetX = clientX - rect.left;
+    offsetY = clientY - rect.top;
+    paper.style.zIndex = 1000;
+    paper.style.cursor = 'grabbing';
+  };
+
+  paper.addEventListener('mousedown', onDown);
+  paper.addEventListener('touchstart', onDown);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchmove', onMove);
+  window.addEventListener('mouseup', onUp);
+  window.addEventListener('touchend', onUp);
+});
+
+// Floating heart animation
+function spawnHeart() {
+  const heart = document.createElement('div');
+  heart.className = 'heart-float';
+  heart.style.left = `${Math.random() * 100}vw`;
+  heart.style.top = `${100 + Math.random() * 20}px`;
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 4000);
+}
+setInterval(spawnHeart, 1200);
+
+</script>
+
+</body>
+</html>
