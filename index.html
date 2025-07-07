@@ -2,6 +2,7 @@
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>I Love You ❤️</title>
   <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Short+Stack&amp;family=Homemade+Apple&amp;display=swap'><link rel="stylesheet" href="./style.css">
   <link href="https://fonts.googleapis.com/css2?family=Zeyada&family=Homemade+Apple&display=swap" rel="stylesheet">
@@ -9,6 +10,15 @@
 
   <style>
   
+  html {
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  touch-action: manipulation;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
   .music-popup {
   position: fixed;
   top: 0;
@@ -253,9 +263,157 @@
   }
 }
 
+@media (max-width: 768px) {
+  .popup-content {
+    max-width: 90%;
+    height: 70vh;
+  }
+
+  .popup-content h2 {
+    font-size: 22px;
+  }
+
+  .popup-content p {
+    font-size: 16px;
+  }
+
+  .pencil-btn {
+    font-size: 1.5em;
+  }
+
+  .loading-text {
+    font-size: 1.6em;
+  }
+
+  .pencil-text {
+    font-size: 0.9em;
+  }
+
+  .voice-hint {
+    font-size: 1em;
+    padding: 14px 24px;
+  }
+
+  .heart-float {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .paper {
+    width: 80vw !important;
+    max-width: 90%;
+    padding: 16px;
+    font-size: 0.95em;
+    transform: none !important;
+    left: 10px !important;
+    top: auto !important;
+    position: relative !important;
+    margin: 20px auto;
+  }
+
+  .paper img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+  }
+
+  .paper p {
+    font-size: 1em;
+    line-height: 1.4;
+  }
+}
+
+@media (max-width: 768px) {
+  .love-video {
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+  }
+
+  #manualPlay {
+    font-size: 1em;
+    padding: 8px 16px;
+    border-radius: 10px;
+    bottom: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .popup-content {
+    height: 65vh;
+    padding: 20px 16px;
+  }
+
+  .popup-content h2 {
+    font-size: 20px;
+  }
+
+  .pencil-btn {
+    font-size: 1.3em;
+  }
+
+  .voice-hint {
+    font-size: 0.95em;
+    padding: 12px 20px;
+    bottom: 40px;
+  }
+}
+
+.paper {
+  touch-action: none;
+}
+
+/* Mobile styles first (default) */
+body { font-size: 1em; }
+/* Desktop overrides */
+@media (min-width: 768px) {
+  body { font-size: 1.2em; }
+}
+
+html, body {
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Example: rotate the whole app */
+body {
+  transform: rotate(0deg);
+  transform-origin: center center;
+}
+
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  body {
+    transform: rotate(90deg);
+    width: 100vh;
+    height: 100vw;
+    overflow: hidden;
+  }
+}
+
   </style>
 </head>
 <body>
+
+<div id="rotateWarning" style="display: none;">
+  <div style="
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #0a0a0a;
+    color: white;
+    font-family: 'Zeyada', cursive;
+    font-size: 2em;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;">
+    Please rotate your device to landscape ❤️
+  </div>
+</div>
 
 <div id="musicPopup" class="music-popup">
   <div class="popup-content">
@@ -464,41 +622,55 @@ window.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  allowBtn.addEventListener('click', () => {
-    console.log("🎵 Play button clicked!");
+  allowBtn.addEventListener("click", async () => {
+  console.log("🎵 Allow button clicked!");
 
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioContext.state === 'suspended') {
-      audioContext.resume();
+  try {
+    // Step 1: Resume AudioContext for autoplay
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
+
+    // Step 2: Request mic access
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach(track => track.stop()); // Stop after getting permission
+
+    // Step 3: Go fullscreen
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) await elem.requestFullscreen();
+    else if (elem.webkitRequestFullscreen) await elem.webkitRequestFullscreen();
+
+    // Step 4: Lock orientation
+    if (screen.orientation?.lock) {
+      await screen.orientation.lock("landscape").catch(() => {});
     }
 
-    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      stream.getTracks().forEach(track => track.stop());
-
-      const seenImages = new Set();
-
-      images.forEach((imgBlock, i) => {
-        imgBlock.addEventListener('pointerdown', () => {
-          seenImages.add(i);
-          if (seenImages.size === images.length) {
-            showVoiceHint();
-            startListening();
-          }
-        });
-      });
-
-      bgMusic.play().catch(err => {
-        console.warn("Autoplay blocked, waiting for user interaction...");
-      });
-
-      popup.style.display = 'none';
-
-    }).catch((err) => {
-      console.error("❌ Microphone access denied:", err);
-      alert("Microphone access is required to unlock the surprise ❤️");
+    // Step 5: Play background music
+    await bgMusic.play().catch(() => {
+      console.warn("🔇 Autoplay blocked, waiting for manual trigger");
     });
-  });
+
+    // Step 6: Setup image reveal tracking + show voice hint
+    const seenImages = new Set();
+    images.forEach((imgBlock, i) => {
+      imgBlock.addEventListener('pointerdown', () => {
+        seenImages.add(i);
+        if (seenImages.size === images.length) {
+          showVoiceHint();
+          startListening();
+        }
+      });
+    });
+
+    // Step 7: Hide the popup
+    popup.style.display = 'none';
+    console.log("✅ All permissions granted. App ready.");
+
+  } catch (err) {
+    console.error("❌ Permission denied or error:", err);
+    alert("Please allow microphone and fullscreen to unlock the surprise ❤️");
+  }
 });
+
 
 // Paper drag code
 document.querySelectorAll('.paper').forEach(paper => {
@@ -548,6 +720,25 @@ function spawnHeart() {
   setTimeout(() => heart.remove(), 4000);
 }
 setInterval(spawnHeart, 1200);
+
+function checkOrientation() {
+  const warning = document.getElementById('rotateWarning');
+  const isPortrait = window.innerHeight > window.innerWidth;
+
+  if (isPortrait) {
+    warning.style.display = 'block';
+    document.body.style.overflow = 'hidden'; // optional
+  } else {
+    warning.style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+}
+
+window.addEventListener("resize", checkOrientation);
+window.addEventListener("orientationchange", checkOrientation);
+checkOrientation(); // ✅ Call it directly
+  
+}); // ✅ Close main DOMContentLoaded listener
 
 </script>
 
