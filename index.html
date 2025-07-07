@@ -405,31 +405,35 @@ body {
 </head>
 <body>
 
-<div id="rotateWarning" style="display: none;">
-  <div style="
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #444;
-    font-family: 'Homemade Apple', cursive;
-    font-size: 2em;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-    text-shadow: 0.5px 0.5px #ccc;
-    filter: contrast(90%) grayscale(30%);
-    z-index: 100000;">
-    Please rotate your device to landscape ❤️
+<div id="rotateWarning" style="
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: none;
+  color: #333;
+  font-family: 'Homemade Apple', cursive;
+  font-size: 2em;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 999999;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+">
+  <div style="max-width: 90%; text-shadow: 0.5px 0.5px #ccc; filter: contrast(90%) grayscale(30%);">
+    Please rotate your device<br>to <strong>landscape</strong> ❤️
   </div>
 </div>
-
 
 <div id="musicPopup" class="music-popup">
   <div class="popup-content">
@@ -744,17 +748,20 @@ function checkOrientation() {
   const isPortrait = window.innerHeight > window.innerWidth;
 
   if (isPortrait) {
-    warning.style.display = 'block';
-    document.body.style.overflow = 'hidden'; // optional
+    warning.style.visibility = 'visible';
+    warning.style.opacity = '1';
+    document.body.style.overflow = 'hidden';
   } else {
-    warning.style.display = 'none';
+    warning.style.visibility = 'hidden';
+    warning.style.opacity = '0';
     document.body.style.overflow = 'auto';
   }
 }
 
 window.addEventListener("resize", checkOrientation);
 window.addEventListener("orientationchange", checkOrientation);
-checkOrientation(); // ✅ Call it directly
+window.addEventListener("DOMContentLoaded", checkOrientation);
+
   
 }); // ✅ Close main DOMContentLoaded listener
 
