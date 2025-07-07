@@ -116,7 +116,8 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  object-fit: cover;
+  object-fit: contain; /* ✅ shows entire video without cropping */
+  background-color: black; /* optional, to avoid gaps */
   display: none;
   z-index: 99999;
 }
@@ -392,6 +393,14 @@ body {
   }
 }
 
+    @media (max-width: 768px) {
+  .love-video {
+    width: 100vw;
+    height: 100vh;
+    object-fit: contain;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -402,18 +411,25 @@ body {
     top: 0; left: 0;
     width: 100vw;
     height: 100vh;
-    background: #0a0a0a;
-    color: white;
-    font-family: 'Zeyada', cursive;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #444;
+    font-family: 'Homemade Apple', cursive;
     font-size: 2em;
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 40px;
+    text-shadow: 0.5px 0.5px #ccc;
+    filter: contrast(90%) grayscale(30%);
     z-index: 100000;">
     Please rotate your device to landscape ❤️
   </div>
 </div>
+
 
 <div id="musicPopup" class="music-popup">
   <div class="popup-content">
@@ -550,13 +566,15 @@ function startListening() {
     }
   };
 
-  recognition.onend = () => {
-    isListening = false;
-    if (!recognition._manuallyStopped) {
-      console.log("🔄 Restarting...");
-      startListening();
-    }
-  };
+recognition.onend = () => {
+  isListening = false;
+  if (!recognition._manuallyStopped) {
+    console.log("🔄 Restarting in 2 seconds...");
+    setTimeout(() => {
+      if (!recognition._manuallyStopped) startListening();
+    }, 2000); // 2 second delay to let user breathe/talk
+  }
+};
 
   recognition._manuallyStopped = false;
   recognition.start();
